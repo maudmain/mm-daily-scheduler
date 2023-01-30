@@ -4,6 +4,8 @@ let today = moment();
 let newTimeblocks = [];
 
 
+// we need to retrieve the textarea input from local storage (JSON.parse the string representation of the array)
+recordArray = JSON.parse(window.localStorage.getItem("records")) ?? [];
 
 // display the current time with a setInterval 
 $(document).ready(function () {
@@ -14,16 +16,11 @@ $(document).ready(function () {
         1000);
 });
 
-//function to run when loading the page
-
-
-//function loadData
-
 // create timeblocks
 //create a form element to hold all timeblocks
 let formEl = $('<form>');
-formEl.addClass('form')
-containerEl.append(formEl)
+formEl.addClass('form');
+containerEl.append(formEl);
 
 // create an array for the hours
 //assuming one timeblock represents one hour
@@ -45,7 +42,7 @@ console.log(newTimeblocks);
 newTimeblocks.forEach((timeblock, index) => {
     let timeblocksDiv = $('<div>');
     timeblocksDiv.addClass('row rounded my-3 timeblock');
-    timeblocksDiv.attr("data-index", index)
+    timeblocksDiv.attr("data-index", index);
     formEl.append(timeblocksDiv);
 
     let divTime = $('<span>');
@@ -60,7 +57,7 @@ newTimeblocks.forEach((timeblock, index) => {
     let divButton = $('<button>');
     divButton.addClass('btn btn-primary col-1 fas fa-save saveBtn');
     timeblocksDiv.append(divButton);
-})
+});
 
 
 // console.log(newTimeblocks)
@@ -89,15 +86,29 @@ function colorTimeblock() {
 };
 colorTimeblock();
 
-// // event listener for save button
+// // event listener for save button with nexted local storage function
 $('.saveBtn').on('click', function (event) {
-    event.precentDefault();
-    //add the input text into the newTimeblocks array
-    let input
+    //prevent the default behaviour
+    event.preventDefault();
+  
+    //for each timeblock, save the input value into local storage
+    // variable to target the sibling textarea of the save button 
+    let inputField = $(event.target).siblings("textarea").val();
+    console.log(inputField);
+    
+    // store the index of the timeblock from the timeblocks
+    let timeblockDiv = $(event.target).parent(".timeblock");
+    let timeblockIndex = timeblockDiv.attr("data-index");
 
-    localStorage.setItem
-})
+    // create a new object containing the start, end hour and the input text. Push to global recordArray 
+    const newTimeblock = newTimeblocks[timeblockIndex]; 
+    let record = {...newTimeblock, description: inputField};
+    // console.log(record);
+    recordArray.push(record);
+    localStorage.setItem("records", JSON.stringify(recordArray));
+
+});
 
 
-//local strorage
+// clear the page at the end of the day
 
