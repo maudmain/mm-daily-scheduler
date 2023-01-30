@@ -6,6 +6,24 @@ let newTimeblocks = [];
 // we need to retrieve the textarea input from local storage (JSON.parse the string representation of the array)
 let recordArray = JSON.parse(window.localStorage.getItem("records")) ?? [];
 
+// create a form element to hold all timeblocks
+let formEl = $('<form>');
+formEl.addClass('form');
+containerEl.append(formEl);
+
+// create an array for the hours
+// assuming one timeblock represents one hour
+const hours = [
+    9, 10, 11, 12, 13, 14, 15, 16
+];
+
+// to initialise the page without delay, handle the interval callback
+function timerTick() {
+    today = moment();
+    $("#currentDay").text(today.format('Do MMMM YYYY, h:mm:ss a'));
+    colorTimeblock();
+}
+
 // create a function to check if any data stored localy for the input
 // it will check the arrays matching the timeblocks parameters and find for the last entry made to localStorage 
 function searchSchedule(startHour, endHour) {
@@ -14,35 +32,20 @@ function searchSchedule(startHour, endHour) {
 
 // display the current time with a setInterval and run the color render(first to avoid delay)
 $(document).ready(function () {
-    colorTimeblock();
-    setInterval(function () {
-        today = moment();
-        $("#currentDay").text(today.format('Do MMMM YYYY, h:mm:ss a'));
-    },
-        1000);
-});
+    setInterval(timerTick, 1000);
+    timerTick();
+})
 
 // create timeblocks
-    // create a form element to hold all timeblocks
-let formEl = $('<form>');
-formEl.addClass('form');
-containerEl.append(formEl);
-
-    // create an array for the hours
-    // assuming one timeblock represents one hour
-const timeblocks = [
-    9, 10, 11, 12, 13, 14, 15, 16
-];
-
-    //create a new array with start and end time for timeblocks
-newTimeblocks = timeblocks.map(timeblock => {
+//create a new array with start and end time for timeblocks
+newTimeblocks = hours.map(timeblock => {
     return {
         startHour: moment().hour(timeblock).startOf("hour"),
         endHour: moment().hour(timeblock + 1).startOf("hour"),
     }
-});
+})
 
-    // forEach loop to create the elements, add the boostrap classes and append to the parent element
+// forEach loop to create the elements, add the boostrap classes and append to the parent element
 newTimeblocks.forEach((timeblock, index) => {
     let timeblocksDiv = $('<div>');
     timeblocksDiv.addClass('row rounded my-3 timeblock');
@@ -62,7 +65,7 @@ newTimeblocks.forEach((timeblock, index) => {
     let divButton = $('<button>');
     divButton.addClass('btn btn-primary col-1 fas fa-save saveBtn');
     timeblocksDiv.append(divButton);
-});
+})
 
 // function to check each timeblock against the current time and set a colour (past/present/future)
 function colorTimeblock() {
@@ -83,7 +86,7 @@ function colorTimeblock() {
             $(element).addClass('future');
         };
     })
-};
+}
 
 // event listener for save button with nexted local storage function
 $('.saveBtn').on('click', function (event) {
@@ -103,4 +106,4 @@ $('.saveBtn').on('click', function (event) {
     let record = { ...newTimeblock, description: inputField };
     recordArray.push(record);
     localStorage.setItem("records", JSON.stringify(recordArray));
-});
+})
