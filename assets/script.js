@@ -101,7 +101,7 @@ $('.saveBtn').on('click', function (event) {
     let timeblockDiv = $(event.target).parent(".timeblock");
     let timeblockIndex = timeblockDiv.attr("data-index");
 
-    // create a new object containing the start, end hour and the input text. Push to global recordArray 
+    // create a new object containing the start, end hour and the input text. Push to global recordArray and set to local storage.
     const newTimeblock = newTimeblocks[timeblockIndex];
     let record = { ...newTimeblock, description: inputField };
     recordArray.push(record);
