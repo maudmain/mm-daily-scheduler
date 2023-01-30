@@ -5,13 +5,22 @@ let newTimeblocks = [];
 
 
 // we need to retrieve the textarea input from local storage (JSON.parse the string representation of the array)
-recordArray = JSON.parse(window.localStorage.getItem("records")) ?? [];
+let recordArray = JSON.parse(window.localStorage.getItem("records")) ?? [];
+
+//create a function to check if any data stored localy for the input
+function searchSchedule(startHour, endHour){
+    return recordArray.findLast((record) => startHour.isSame(record.startHour) && endHour.isSame(record.endHour));
+ }
+//display element from the recorArray
+
+
 
 // display the current time with a setInterval 
 $(document).ready(function () {
     setInterval(function () {
         today = moment();
         $("#currentDay").text(today.format('Do MMMM YYYY, h:mm:ss a'));
+        colorTimeblock();
     },
         1000);
 });
@@ -31,8 +40,8 @@ const timeblocks = [
 //create a new array with start and end time for timeblocks
 newTimeblocks = timeblocks.map(timeblock => {
     return {
-        startHour: moment().hour(timeblock).minute(0).second(0),
-        endHour: moment().hour(timeblock).minute(59).second(0),
+        startHour: moment().hour(timeblock).startOf("hour"),
+        endHour: moment().hour(timeblock +1).startOf("hour"),
     }
 });
 console.log(newTimeblocks);
@@ -52,7 +61,9 @@ newTimeblocks.forEach((timeblock, index) => {
 
     let divInput = $('<textarea>');
     divInput.addClass('inputText border-0 col-9 bg-transparent ');
+    divInput.text(searchSchedule(timeblock.startHour, timeblock.endHour)?.description ?? '');
     timeblocksDiv.append(divInput);
+
 
     let divButton = $('<button>');
     divButton.addClass('btn btn-primary col-1 fas fa-save saveBtn');
@@ -84,7 +95,7 @@ function colorTimeblock() {
     };
 })
 };
-colorTimeblock();
+
 
 // // event listener for save button with nexted local storage function
 $('.saveBtn').on('click', function (event) {
@@ -103,12 +114,14 @@ $('.saveBtn').on('click', function (event) {
     // create a new object containing the start, end hour and the input text. Push to global recordArray 
     const newTimeblock = newTimeblocks[timeblockIndex]; 
     let record = {...newTimeblock, description: inputField};
-    // console.log(record);
+    console.log(record);
     recordArray.push(record);
     localStorage.setItem("records", JSON.stringify(recordArray));
+    
 
 });
 
 
 // clear the page at the end of the day
+// localStorage.clear();
 
