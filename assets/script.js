@@ -30,7 +30,7 @@ function searchSchedule(startHour, endHour) {
     return recordArray.findLast((record) => startHour.isSame(record.startHour) && endHour.isSame(record.endHour));
 }
 
-// display the current time with a setInterval and run the color render(first to avoid delay)
+// display the current time with a setInterval and run the color render
 $(document).ready(function () {
     setInterval(timerTick, 1000);
     timerTick();
