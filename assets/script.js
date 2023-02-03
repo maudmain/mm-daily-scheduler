@@ -14,7 +14,7 @@ containerEl.append(formEl);
 // create an array for the hours
 // assuming one timeblock represents one hour
 const hours = [
-    9, 10, 11, 12, 13, 14, 15, 16
+    9, 10, 11, 12, 13, 14, 15, 16, 17
 ];
 
 // to initialise the page without delay, handle the interval callback
